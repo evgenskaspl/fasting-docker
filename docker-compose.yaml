@@ -1,6 +1,8 @@
-version: '3.8'
+version: "3.8"
+
 networks:
   shared-network:
+
 services:
   nginx:
     image: nginx:1.27.2-alpine
@@ -22,14 +24,40 @@ services:
     container_name: fasting-be
     ports:
       - "5000:3000"
+    depends_on:
+      - postgres # Ensures the DB is ready before starting BE
+    environment:
+      POSTGRES_USER: fasting_user
+      POSTGRES_PASSWORD: fasting_pass
+      POSTGRES_DB: fasting_db
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
     networks:
       - shared-network
 
-  frontend:
-    build: .././frontend
-    container_name: frontend
+  fasting-ui:
+    build: .././fasting-ui
+    container_name: fasting-ui
     ports:
       - "5001:80"
       - "5002:443"
     networks:
       - shared-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: fasting_user
+      POSTGRES_PASSWORD: fasting_pass
+      POSTGRES_DB: fasting_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
+volumes:
+  postgres-data:
