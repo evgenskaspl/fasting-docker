@@ -23,7 +23,7 @@ services:
     build: .././fasting-be
     container_name: fasting-be
     ports:
-      - "5000:3000"
+      - "5050:3000"
     depends_on:
       - postgres # Ensures the DB is ready before starting BE
     environment:
@@ -32,6 +32,7 @@ services:
       POSTGRES_DB: fasting_db
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
+      DB_DIALECT: postgres
     networks:
       - shared-network
 
